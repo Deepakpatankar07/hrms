@@ -1,25 +1,30 @@
+.candidate-form-container {
+  width: 100%;
+  height: 100%;
+}
 .candidate-form {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 300px);
   gap: 16px;
+  padding: 16px 16px 0px;
 }
 
-.form-group {
+.form-group-candidate {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
+.form-group-candidate label {
   font-size: 14px;
   color: #6B7280;
 }
 
-.form-group input,
-.form-group select {
+.form-group-candidate input,
+.form-group-candidate select {
   width: 100%;
   padding: 8px;
-  border: 1px solid #E5E7EB;
+  border: 1px solid #7a00c6;
   border-radius: 4px;
   font-size: 14px;
 }
@@ -29,15 +34,23 @@
   font-size: 14px;
 }
 
-.form-actions {
+.form-actions-candidate {
   display: flex;
-  gap: 16px;
-  justify-content: flex-end;
+  gap: 40px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 @media (max-width: 768px) {
-  .form-actions {
+.candidate-form {
+  display: flex;
+  flex-direction: column;
+  /* grid-template-columns: repeat(1, 200px); */
+  gap: 16px;
+  padding: 16px 16px 0px;
+}
+  /* .form-actions {
     flex-direction: column;
     gap: 8px;
-  }
+  } */
 }

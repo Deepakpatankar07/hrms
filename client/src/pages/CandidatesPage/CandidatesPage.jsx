@@ -206,7 +206,7 @@ const CandidatesPage = () => {
                     <button className="dropdown-toggle">
                       <MoreVertical size={18} />
                     </button>
-                    <div className="dropdown-menu">
+                    <div className="dropdown-menuu">
                       <button onClick={() => handleDownloadResume(candidate.id)}>
                         <Download size={14} /> Download Resume
                       </button>

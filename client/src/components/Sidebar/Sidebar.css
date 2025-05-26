@@ -5,13 +5,14 @@
   padding: 24px;
   height: 100vh;
   position: fixed;
-  border: .1px solid #E5E7EB;
+  border: .1px solid #d4d6da;
+  transition: transform 0.3s ease;
+  z-index: 100;
 }
 
 .sidebar-logo {
   margin-bottom: 40px;
   padding: 0px 16px;
-  /* background-color: red; */
 }
 
 .sidebar-logo h2 {
@@ -21,7 +22,6 @@
   align-items: center;
   gap: 8px;
 }
-
 
 .sidebar-nav {
   display: flex;
@@ -47,7 +47,7 @@
   font-size: 14px;
 }
 
-.search-icon {
+.sidebar-search-icon {
   margin-right: 8px;
   color: #6B7280;
 }
@@ -61,7 +61,6 @@
   text-decoration: none;
   border-radius: 4px;
   transition: background 0.2s;
-  /* background: yellow; */
 }
 
 .nav-link:hover {
@@ -76,18 +75,80 @@
   font-size: 18px;
 }
 
+/* Mobile Header */
+.mobile-header {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #F5F6FA;
+  border-bottom: 1px solid #E5E7EB;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+}
 
+.mobile-logo {
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4D007D;
+}
+
+.mobile-menu-toggle {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #4D007D;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  display: none;
+}
+
+/* Responsive styles */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    margin-bottom: 1rem;
+  .mobile-header {
+    display: flex;
   }
-
-
-  .sidebar-nav {
-    flex-direction: row;
-    overflow-x: auto;
+  
+  .sidebar {
+    transform: translateX(-100%);
+    top: 0;
+    left: 0;
+    height: 100vh;
+    margin-bottom: 0;
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .mobile-overlay {
+    display: block;
+  }
+  
+  .sidebar-logo {
+    display: none;
+  }
+  
+  .header-search {
+    width: 100%;
   }
 }

@@ -7,6 +7,7 @@ import EmployeesPage from "./pages/EmployeesPage/EmployeesPage.jsx";
 import AttendancePage from "./pages/AttendancePage/AttendancePage.jsx";
 import LeavesPage from "./pages/LeavesPage/LeavesPage.jsx";
 import "./App.css";
+import RegisterPage from "./pages/RegisterPage/RegisterPage.jsx";
 
 // const App = () => {
 //   return (
@@ -45,6 +46,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route element={
           <div className="app-layout">
             <Sidebar />

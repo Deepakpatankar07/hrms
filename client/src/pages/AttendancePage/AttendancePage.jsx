@@ -134,7 +134,7 @@ const AttendancePage = () => {
                     <button className="dropdown-toggle">
                       <MoreVertical size={18} />
                     </button>
-                    <div className="dropdown-menu">
+                    <div className="dropdown-menu-attendance">
                       <button onClick={() => toggleStatus(employee.id)}>
                         Mark as {employee.status === 'Present' ? 'Absent' : 'Present'}
                       </button>

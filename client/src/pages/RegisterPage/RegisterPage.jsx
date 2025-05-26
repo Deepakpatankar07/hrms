@@ -1,23 +1,35 @@
 import { useState } from "react";
-import "./LoginPage.css";
+import "./RegisterPage.css";
 import Button from "../../components/Button/Button";
 import { NavLink } from "react-router-dom";
 
-const LoginPage = () => {
+const RegisterPage = () => {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Placeholder for login logic
-    console.log("Login:", { email, password });
+    // Placeholder for registration logic
+    console.log("Register:", { fullName, email, password });
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-      <h3>Login to HRMS</h3>
+    <div className="register-container">
+      <div className="register-card">
+        <h3>Create HRMS Account</h3>
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
           <div className="form-group">
             <label>Email</label>
             <input
@@ -39,16 +51,23 @@ const LoginPage = () => {
             />
           </div>
           <div className="form-group">
-            <NavLink to="#" className="forget-password">Forget Password?</NavLink>
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm your password"
+              required
+            />
           </div>
-          <div className="login-button-container">
+          <div className="register-button-container">
             <Button type="submit" variant="purple">
-              Login
+              Register
             </Button>
           </div>
           <div className="form-group">
-            <NavLink to="/register" className="register-link">
-              <h4>Don't have an account? <span>Register</span></h4>
+            <NavLink to="/login" className="login-link">
+              Already have an account? <span>Login</span>
             </NavLink>
           </div>
         </form>
@@ -57,4 +76,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

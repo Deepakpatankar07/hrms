@@ -154,13 +154,13 @@
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 20px;
-  flex-wrap: wrap;
 }
 
 .filter-group {
   display: flex;
   align-items: center;
   gap: 15px;
+  white-space: nowrap;
 }
 
 .leaves-layout {
@@ -260,9 +260,10 @@
   background-color: #f0f0f0;
 }
 
-.dropdown-menu {
+.dropdown-menu-leaves {
   position: absolute;
-  right: 0;
+  right: 100%;
+  bottom: 0;
   background-color: white;
   min-width: 150px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -272,11 +273,11 @@
   padding: 8px;
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown:hover .dropdown-menu-leaves {
   display: block;
 }
 
-.dropdown-menu select {
+.dropdown-menu-leaves select {
   width: 100%;
   padding: 6px;
   margin-bottom: 8px;
@@ -284,7 +285,7 @@
   border: 1px solid #ddd;
 }
 
-.dropdown-menu button {
+.dropdown-menu-leaves button {
   width: 100%;
   text-align: left;
   padding: 8px;
@@ -296,11 +297,11 @@
   gap: 8px;
 }
 
-.dropdown-menu button:hover {
+.dropdown-menu-leaves button:hover {
   background-color: #f5f5f5;
 }
 
-.dropdown-menu button.delete {
+.dropdown-menu-leaves button.delete {
   color: #d32f2f;
 }
 

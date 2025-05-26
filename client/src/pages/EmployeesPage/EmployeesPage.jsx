@@ -139,7 +139,7 @@ const EmployeesPage = () => {
                     <button className="dropdown-toggle">
                       <MoreVertical size={18} />
                     </button>
-                    <div className="dropdown-menu">
+                    <div className="dropdown-menu-employees">
                       <button onClick={() => handleEditEmployee(employee.id)}>
                         <Edit size={14} /> Edit
                       </button>

@@ -40,6 +40,7 @@
   position: sticky;
   top: 0;
   color: white;
+  padding: 16px 15px;
 }
 
 .attendance-table tr:hover {
@@ -99,22 +100,23 @@
   background-color: #f0f0f0;
 }
 
-.dropdown-menu {
+.dropdown-menu-attendance {
   position: absolute;
-  right: 0;
+  right: 100%;
+  bottom: 0;
   background-color: white;
-  min-width: 180px;
+  min-width: 150px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
   z-index: 1;
   display: none;
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown:hover .dropdown-menu-attendance {
   display: block;
 }
 
-.dropdown-menu button {
+.dropdown-menu-attendance button {
   width: 100%;
   text-align: left;
   padding: 8px 16px;
@@ -126,7 +128,7 @@
   gap: 8px;
 }
 
-.dropdown-menu button:hover {
+.dropdown-menu-attendance button:hover {
   background-color: #f5f5f5;
 }
 

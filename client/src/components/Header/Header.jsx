@@ -6,7 +6,7 @@ const Header = ({title}) => {
   return (
     <header className="header">
       <div className="">
-        <h3>{title}</h3>
+        <h3 className='header-title'>{title}</h3>
       </div>
       <div className="header-actions">
         <FaBell className="header-icon" />
