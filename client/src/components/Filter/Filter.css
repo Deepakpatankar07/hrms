@@ -1,0 +1,17 @@
+.filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter label {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+.filter select {
+  padding: 8px;
+  border: 1px solid #E5E7EB;
+  border-radius: 4px;
+  font-size: 14px;
+}

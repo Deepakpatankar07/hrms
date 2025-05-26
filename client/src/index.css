@@ -1,0 +1,56 @@
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #F5F6FA;
+  color: #2D3748;
+}
+
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+p {
+  font-size: 14px;
+  color: #6B7280;
+}
+
+
+
+/* Global classes */
+.container {
+  display: flex;
+  min-height: 100vh;
+  margin-left: 250px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+}
+
+.card {
+  background: #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+/* Responsive design */
+@media (max-width: 768px) {
+ 
+  .container {
+    margin-left: 0;
+    flex-direction: column;
+  }
+
+  .main-content {
+    padding: 16px;
+  }
+}
