@@ -1,24 +1,55 @@
 import { useState } from "react";
+import axios from "axios";
 import "./RegisterPage.css";
 import Button from "../../components/Button/Button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Placeholder for registration logic
-    console.log("Register:", { fullName, email, password });
+    setError("");
+
+    // Basic validation
+    if (password !== confirmPassword) {
+      return setError("Passwords do not match");
+    }
+
+    try {
+      setLoading(true);
+      
+      // Make API call to register endpoint
+      const response = await axios.post("http://localhost:5000/api/v1/auth/register", {
+        name: fullName,
+        email,
+        password,
+        role: "hr" // All ready Default role in backend is "hr"
+      });
+
+      // Handle successful registration
+      console.log("Registration successful:", response.data);
+      navigate("/login"); // Redirect to login page after successful registration
+      
+    } catch (err) {
+      console.error("Registration error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="register-container">
       <div className="register-card">
         <h3>Create HRMS Account</h3>
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Full Name</label>
@@ -48,6 +79,7 @@ const RegisterPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               required
+              minLength="8"
             />
           </div>
           <div className="form-group">
@@ -58,11 +90,12 @@ const RegisterPage = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm your password"
               required
+              minLength="8"
             />
           </div>
           <div className="register-button-container">
-            <Button type="submit" variant="purple">
-              Register
+            <Button type="submit" variant="purple" disabled={loading}>
+              {loading ? "Registering..." : "Register"}
             </Button>
           </div>
           <div className="form-group">

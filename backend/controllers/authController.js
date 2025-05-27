@@ -23,14 +23,8 @@ exports.register = async (req, res, next) => {
       role
     });
 
-    // Create token
-    const token = jwt.sign({ id: user._id }, config.jwtSecret, {
-      expiresIn: config.jwtExpire
-    });
-
     res.status(201).json({
       success: true,
-      token
     });
   } catch (err) {
     next(err);

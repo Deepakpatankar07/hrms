@@ -8,7 +8,6 @@ const attendanceSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    required: [true, 'Please provide attendance date'],
     default: Date.now
   },
   status: {
