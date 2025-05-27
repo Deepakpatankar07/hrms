@@ -18,20 +18,19 @@ router
   .route('/')
   .get(
     protect,
-    authorize('hr', 'admin'),
     advancedResults(Employee),
     getEmployees
   )
-  .post(protect, authorize('admin'), createEmployee);
+  .post(protect, createEmployee);
 
 router
   .route('/:id')
-  .get(protect, authorize('hr', 'admin'), getEmployee)
-  .put(protect, authorize('hr', 'admin'), updateEmployee)
-  .delete(protect, authorize('admin'), deleteEmployee);
+  .get(protect, getEmployee)
+  .put(protect, updateEmployee)
+  .delete(protect, deleteEmployee);
 
 router
   .route('/:id/photo')
-  .put(protect, authorize('hr', 'admin'), upload, uploadPhoto);
+  .put(protect, upload, uploadPhoto);
 
 module.exports = router;

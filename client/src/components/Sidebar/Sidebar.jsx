@@ -1,87 +1,5 @@
-// import { NavLink } from "react-router-dom";
-// import {
-//   FaHome,
-//   FaUser,
-//   FaUsers,
-//   FaCalendar,
-//   FaSignOutAlt,
-//   FaSearch,
-// } from "react-icons/fa";
-// import { IoCubeSharp } from "react-icons/io5";
-// import { MdCoPresent } from "react-icons/md";
-// import "./Sidebar.css";
-// import { useLocation } from "react-router-dom";
-
-// const Sidebar = () => {
-//   const location = useLocation();
-//   return (
-//     <aside className="sidebar">
-//       <div className="sidebar-logo">
-//         <h2>
-//           <IoCubeSharp /> HRMS
-//         </h2>
-//       </div>
-//       <nav className="sidebar-nav">
-//         <div className="header-search">
-//           <FaSearch className="search-icon" />
-//           <input type="text" placeholder="Search..." />
-//         </div>
-//         <NavLink
-//           to="/dashboard"
-//           className={({ isActive }) =>
-//             isActive || location.pathname === "/"
-//               ? "nav-link active"
-//               : "nav-link"
-//           }
-//         >
-//           <FaHome className="nav-icon" /> Dashboard
-//         </NavLink>
-//         <NavLink
-//           to="/candidates"
-//           className={({ isActive }) =>
-//             isActive ? "nav-link active" : "nav-link"
-//           }
-//         >
-//           <FaUser className="nav-icon" /> Candidates
-//         </NavLink>
-//         <NavLink
-//           to="/employees"
-//           className={({ isActive }) =>
-//             isActive ? "nav-link active" : "nav-link"
-//           }
-//         >
-//           <FaUsers className="nav-icon" /> Employees
-//         </NavLink>
-//         <NavLink
-//           to="/attendance"
-//           className={({ isActive }) =>
-//             isActive ? "nav-link active" : "nav-link"
-//           }
-//         >
-//           <MdCoPresent className="nav-icon" /> Attendance
-//         </NavLink>
-//         <NavLink
-//           to="/leaves"
-//           className={({ isActive }) =>
-//             isActive ? "nav-link active" : "nav-link"
-//           }
-//         >
-//           <FaCalendar className="nav-icon" /> Leaves
-//         </NavLink>
-//         <NavLink to="/login" className="nav-link">
-//           <FaSignOutAlt className="nav-icon" /> Logout
-//         </NavLink>
-//       </nav>
-//     </aside>
-//   );
-// };
-
-// export default Sidebar;
-
-
-
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaUser,
@@ -96,13 +14,23 @@ import { IoCubeSharp } from "react-icons/io5";
 import { MdCoPresent } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import "./Sidebar.css";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const Sidebar = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+
+  const handleLogout = () => {
+    logout();
+    setIsMobileMenuOpen(false);
+    navigate("/login");
   };
 
   return (
@@ -176,13 +104,12 @@ const Sidebar = () => {
           >
             <FaCalendar className="nav-icon" /> Leaves
           </NavLink>
-          <NavLink 
-            to="/login" 
+          <div
             className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
+            onClick={handleLogout}
           >
             <FaSignOutAlt className="nav-icon" /> Logout
-          </NavLink>
+          </div>
         </nav>
       </aside>
       

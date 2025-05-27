@@ -8,7 +8,14 @@ const fs = require('fs');
 // @route   GET /api/v1/employees
 // @access  Private
 exports.getEmployees = asyncHandler(async (req, res, next) => {
-  res.status(200).json(res.advancedResults);
+
+  const employees = await Employee.find();
+  
+
+  res.status(200).json({
+    success: true,
+    data: employees
+  });
 });
 
 // @desc    Get single employee
@@ -33,8 +40,11 @@ exports.getEmployee = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/employees
 // @access  Private/Admin
 exports.createEmployee = asyncHandler(async (req, res, next) => {
-  // Add user to req.body
-  req.body.user = req.user.id;
+   const existingEmployee = await Employee.findOne({ email: req.body.email });
+  if (existingEmployee) {
+    return next(new ErrorResponse('Email already exists', 400));
+  }
+
 
   const employee = await Employee.create(req.body);
 
@@ -56,19 +66,9 @@ exports.updateEmployee = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Make sure user is HR or admin
-  if (req.user.role !== 'admin') {
-    return next(
-      new ErrorResponse(
-        `User ${req.user.id} is not authorized to update this employee`,
-        401
-      )
-    );
-  }
-
   employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true
+
   });
 
   res.status(200).json({
@@ -90,14 +90,14 @@ exports.deleteEmployee = asyncHandler(async (req, res, next) => {
   }
 
   // Delete photo if exists
-  if (employee.photo !== 'default.jpg') {
-    const filePath = path.join(__dirname, `../uploads/${employee.photo}`);
-    fs.unlink(filePath, err => {
-      if (err) console.error(err);
-    });
-  }
+  // if (employee.photo !== 'default.jpg') {
+  //   const filePath = path.join(__dirname, `../uploads/${employee.photo}`);
+  //   fs.unlink(filePath, err => {
+  //     if (err) console.error(err);
+  //   });
+  // }
 
-  await employee.remove();
+  await  Employee.findByIdAndDelete(req.params.id ,{ new: true});
 
   res.status(200).json({
     success: true,

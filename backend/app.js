@@ -53,9 +53,15 @@ const limiter = rateLimit({
   max: 100
 });
 // app.use(limiter);
+const fileupload = require('express-fileupload');
 
-// Set static folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// File uploading
+app.use(fileupload());
+
+// Make sure this comes before your routes
+app.use(express.static('public')); 
+
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);

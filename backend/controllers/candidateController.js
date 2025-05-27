@@ -3,12 +3,20 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const path = require('path');
 const fs = require('fs');
+const Employee = require('../models/EmployeeModel');
 
 // @desc    Get all candidates
 // @route   GET /api/v1/candidates
 // @access  Private
 exports.getCandidates = asyncHandler(async (req, res, next) => {
-  res.status(200).json(res.advancedResults);
+  const candidates = await Candidate.find();
+  if (!candidates || candidates.length === 0) {
+    return next(new ErrorResponse('No candidates found', 404));
+  }
+  console.log(candidates);
+  res.status(200).json({
+    candidates
+  });
 });
 
 // @desc    Get single candidate
@@ -33,16 +41,57 @@ exports.getCandidate = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/candidates
 // @access  Private
 exports.createCandidate = asyncHandler(async (req, res, next) => {
-  // Add user to req.body
-  req.body.user = req.user.id;
+  // First ensure you have the file upload middleware configured
+  if (!req.files || !req.files.resume) {
+    return next(new ErrorResponse('Please upload a resume file', 400));
+  }
 
-  const candidate = await Candidate.create(req.body);
+  const file = req.files.resume;
 
-  res.status(201).json({
-    success: true,
-    data: candidate
+  // Validate file type
+  const fileTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!fileTypes.includes(file.mimetype)) {
+    return next(new ErrorResponse('Please upload a PDF or Word document', 400));
+  }
+
+  // Check file size (5MB max)
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) {
+    return next(new ErrorResponse(`File size should be less than ${maxSize/1024/1024}MB`, 400));
+  }
+
+  // Create custom filename
+  const ext = path.extname(file.name);
+  file.name = `resume_${req.body.name.replace(/\s+/g, '_')}_${Date.now()}${ext}`;
+
+  // Upload file
+  file.mv(`${process.env.FILE_UPLOAD_PATH || './public/uploads'}/${file.name}`, async err => {
+    if (err) {
+      console.error(err);
+      return next(new ErrorResponse('Problem with file upload', 500));
+    }
+
+    try {
+      const candidateData = {
+        ...req.body,
+        resume: file.name,
+        user: req.user.id // Add the user who created the candidate
+      };
+
+      const candidate = await Candidate.create(candidateData);
+      
+      res.status(201).json({
+        success: true,
+        data: candidate
+      });
+    } catch (err) {
+      // Clean up the uploaded file if creation fails
+      fs.unlink(`${process.env.FILE_UPLOAD_PATH || './public/uploads'}/${file.name}`, () => {});
+      return next(new ErrorResponse(err.message, 400));
+    }
   });
 });
+
 
 // @desc    Update candidate
 // @route   PUT /api/v1/candidates/:id
@@ -53,16 +102,6 @@ exports.updateCandidate = asyncHandler(async (req, res, next) => {
   if (!candidate) {
     return next(
       new ErrorResponse(`Candidate not found with id of ${req.params.id}`, 404)
-    );
-  }
-
-  // Make sure user is HR or admin
-  if (req.user.role !== 'admin') {
-    return next(
-      new ErrorResponse(
-        `User ${req.user.id} is not authorized to update this candidate`,
-        401
-      )
     );
   }
 
@@ -116,50 +155,50 @@ exports.deleteCandidate = asyncHandler(async (req, res, next) => {
 // @desc    Upload resume for candidate
 // @route   PUT /api/v1/candidates/:id/resume
 // @access  Private
-exports.uploadResume = asyncHandler(async (req, res, next) => {
-  const candidate = await Candidate.findById(req.params.id);
+// exports.uploadResume = asyncHandler(async (req, res, next) => {
+//   const candidate = await Candidate.findById(req.params.id);
 
-  if (!candidate) {
-    return next(
-      new ErrorResponse(`Candidate not found with id of ${req.params.id}`, 404)
-    );
-  }
+//   if (!candidate) {
+//     return next(
+//       new ErrorResponse(`Candidate not found with id of ${req.params.id}`, 404)
+//     );
+//   }
 
-  if (!req.file) {
-    return next(new ErrorResponse(`Please upload a file`, 400));
-  }
+//   if (!req.file) {
+//     return next(new ErrorResponse(`Please upload a file`, 400));
+//   }
 
-  // Check if file is PDF
-  if (!req.file.mimetype.startsWith('application/pdf')) {
-    return next(new ErrorResponse(`Please upload a PDF file`, 400));
-  }
+//   // Check if file is PDF
+//   if (!req.file.mimetype.startsWith('application/pdf')) {
+//     return next(new ErrorResponse(`Please upload a PDF file`, 400));
+//   }
 
-  // Check file size
-  if (req.file.size > process.env.MAX_FILE_UPLOAD) {
-    return next(
-      new ErrorResponse(
-        `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
-        400
-      )
-    );
-  }
+//   // Check file size
+//   if (req.file.size > process.env.MAX_FILE_UPLOAD) {
+//     return next(
+//       new ErrorResponse(
+//         `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+//         400
+//       )
+//     );
+//   }
 
-  // Delete old resume if exists
-  if (candidate.resume) {
-    const oldFilePath = path.join(__dirname, `../uploads/${candidate.resume}`);
-    fs.unlink(oldFilePath, err => {
-      if (err) console.error(err);
-    });
-  }
+//   // Delete old resume if exists
+//   if (candidate.resume) {
+//     const oldFilePath = path.join(__dirname, `../uploads/${candidate.resume}`);
+//     fs.unlink(oldFilePath, err => {
+//       if (err) console.error(err);
+//     });
+//   }
 
-  // Update candidate with new resume
-  await Candidate.findByIdAndUpdate(req.params.id, { resume: req.file.filename });
+//   // Update candidate with new resume
+//   await Candidate.findByIdAndUpdate(req.params.id, { resume: req.file.filename });
 
-  res.status(200).json({
-    success: true,
-    data: req.file.filename
-  });
-});
+//   res.status(200).json({
+//     success: true,
+//     data: req.file.filename
+//   });
+// });
 
 // @desc    Download candidate resume
 // @route   GET /api/v1/candidates/:id/resume
@@ -179,7 +218,7 @@ exports.downloadResume = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    Move candidate to employee
-// @route   POST /api/v1/candidates/:id/move-to-employee
+// @route   POST /api/v1/candidates/move-to-employee/:id
 // @access  Private/Admin
 exports.moveToEmployee = asyncHandler(async (req, res, next) => {
   const candidate = await Candidate.findById(req.params.id);
@@ -191,7 +230,7 @@ exports.moveToEmployee = asyncHandler(async (req, res, next) => {
   }
 
   // Check if candidate is hired
-  if (candidate.status !== 'Hired') {
+  if (candidate.status !== 'Selected') {
     return next(
       new ErrorResponse(
         `Candidate must be in Hired status to be moved to employees`,
@@ -212,10 +251,10 @@ exports.moveToEmployee = asyncHandler(async (req, res, next) => {
   };
 
   // In a real app, you would create an Employee here
-  // const employee = await Employee.create(employeeData);
+  const employee = await Employee.create(employeeData);
 
   // Delete candidate
-  await candidate.remove();
+  await Candidate.findByIdAndDelete(req.params.id)
 
   res.status(200).json({
     success: true,

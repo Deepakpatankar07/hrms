@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const employeeSchema = new mongoose.Schema({
+  
   name: {
     type: String,
     required: [true, 'Please provide employee name']
@@ -25,41 +26,32 @@ const employeeSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide employee position']
   },
-  department: {
-    type: String,
-    required: [true, 'Please provide employee department']
-  },
+  // department: {
+  //   type: String,
+  //   // required: [true, 'Please provide employee department']
+  // },
   experience: {
     type: Number,
-    required: [true, 'Please provide employee experience']
+    // required: [true, 'Please provide employee experience']
   },
   salary: {
     type: Number,
-    required: [true, 'Please provide employee salary']
+    // required: [true, 'Please provide employee salary']
   },
   status: {
     type: String,
-    enum: ['Active', 'Inactive', 'Suspended', 'Terminated'],
+    // enum: ['Active', 'Inactive', 'Suspended', 'Terminated'],
     default: 'Active'
   },
   role: {
     type: String,
-    enum: ['employee', 'manager', 'admin'],
+    // enum: ['employee', 'manager', 'admin'],
     default: 'employee'
   },
   joinedAt: {
     type: Date,
     default: Date.now
   },
-  photo: {
-    type: String,
-    default: 'default.jpg'
-  },
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
-  }
 });
 
 // Create text index for search
