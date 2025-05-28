@@ -20,7 +20,6 @@ router
   .route('/')
   .get(
     protect,
-    authorize('hr', 'admin'),
     advancedResults(Leave, 'employee'),
     getLeaves
   )
@@ -33,8 +32,8 @@ router
 router
   .route('/:id')
   .get(protect, getLeave)
-  .put(protect, authorize('hr', 'admin'), updateLeave)
-  .delete(protect, authorize('admin'), deleteLeave);
+  .put(protect, updateLeave)
+  .delete(protect, deleteLeave);
 
 router
   .route('/:id/documents')

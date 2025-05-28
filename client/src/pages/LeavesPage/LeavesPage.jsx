@@ -1,82 +1,101 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../components/Header/Header.jsx';
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
 import Filter from '../../components/Filter/Filter.jsx';
 import Button from '../../components/Button/Button.jsx';
 import Modal from '../../components/Modal/Modal.jsx';
 import LeaveForm from '../../components/LeaveForm/LeaveForm.jsx';
-import { MoreVertical, Edit, Trash2, Calendar } from 'react-feather';
+import { MoreVertical, Edit, Trash2, Calendar, Download } from 'react-feather';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isWithinInterval } from 'date-fns';
 import './LeavesPage.css';
+import { useAuth } from '../../context/AuthContext';
 
 const LeavesPage = () => {
- const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [leaves, setLeaves] = useState([
-    { 
-      id: '1',
-      employeeName: 'Jane Copper', 
-      startDate: '2025-05-25', 
-      endDate: '2025-05-27', 
-      leaveType: 'Annual',
-      reason: 'Family vacation', 
-      status: 'approved',
-      document: 'leave-doc.pdf'
-    },
-    { 
-      id: 2, 
-      employeeName: 'Arlene McCoy', 
-      startDate: '2025-05-26', 
-      endDate: '2025-05-26', 
-      reason: 'Doctor appointment', 
-      status: 'pending' 
-    },
-    { 
-      id: 3, 
-      employeeName: 'Cody Fisher', 
-      startDate: '2025-05-28', 
-      endDate: '2025-05-30', 
-      reason: 'Business trip', 
-      status: 'approved' 
-    },
-    { 
-      id: 4, 
-      employeeName: 'Janney Wilson', 
-      startDate: '2025-06-01', 
-      endDate: '2025-06-05', 
-      reason: 'Personal leave', 
-      status: 'rejected' 
-    },
-  ]);
+  const [selectedLeave, setSelectedLeave] = useState(null);
+  const [leaves, setLeaves] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  const statusOptions = [
-    { value: 'all', label: 'All Statuses' },
-    { value: 'pending', label: 'Pending' },
-    { value: 'approved', label: 'Approved' },
-    { value: 'rejected', label: 'Rejected' },
-  ];
+  useEffect(() => {
+    const fetchLeaves = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/api/v1/leaves', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setLeaves(response.data.data);
+      } catch (err) {
+        console.error('Failed to fetch leaves', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Filter leaves based on search term and status filter
+    fetchLeaves();
+  }, []);
+
   const filteredLeaves = leaves.filter(leave => {
-    const matchesSearch = leave.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = leave.employee?.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          leave.reason.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || leave.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || leave.status.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const handleStatusChange = (id, newStatus) => {
-    setLeaves(leaves.map(leave => 
-      leave.id === id ? { ...leave, status: newStatus } : leave
-    ));
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `http://localhost:5000/api/v1/leaves/${id}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      
+      setLeaves(leaves.map(leave => 
+        leave._id === id ? response.data.data : leave
+      ));
+    } catch (err) {
+      console.error('Failed to update leave status', err);
+    }
   };
 
-  const handleDeleteLeave = (id) => {
+  const handleDeleteLeave = async (id) => {
     if (window.confirm('Are you sure you want to delete this leave record?')) {
-      setLeaves(leaves.filter(leave => leave.id !== id));
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:5000/api/v1/leaves/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        setLeaves(leaves.filter(leave => leave._id !== id));
+      } catch (err) {
+        console.error('Failed to delete leave', err);
+      }
     }
+  };
+
+  const handleAddLeaveSuccess = (newLeave) => {
+    setLeaves([...leaves, newLeave]);
+    setIsModalOpen(false);
+  };
+
+  const handleUpdateLeaveSuccess = (updatedLeave) => {
+    setLeaves(leaves.map(leave => 
+      leave._id === updatedLeave._id ? updatedLeave : leave
+    ));
+    setIsModalOpen(false);
+    setSelectedLeave(null);
   };
 
   // Calendar generation
@@ -92,11 +111,6 @@ const LeavesPage = () => {
     setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1));
   };
 
-   const handleAddLeaveSuccess = (newLeave) => {
-    setLeaves([...leaves, newLeave]);
-    setIsModalOpen(false);
-  };
-
   return (
     <div className="main-content">
       <Header title="Leaves Management" />
@@ -110,11 +124,22 @@ const LeavesPage = () => {
         <div className="filter-group">
           <Filter
             label="Status"
-            options={statusOptions}
+            options={[
+              { value: 'all', label: 'All Statuses' },
+              { value: 'pending', label: 'Pending' },
+              { value: 'approved', label: 'Approved' },
+              { value: 'rejected', label: 'Rejected' },
+            ]}
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           />
-          <Button variant="purple" onClick={() => setIsModalOpen(true)}>
+          <Button 
+            variant="purple" 
+            onClick={() => {
+              setSelectedLeave(null);
+              setIsModalOpen(true);
+            }}
+          >
             <Calendar size={16} style={{ marginRight: '8px' }} />
             Create Leave
           </Button>
@@ -123,64 +148,87 @@ const LeavesPage = () => {
 
       <div className="leaves-layout">
         <div className="leaves-table-container">
-          <table className="leaves-table">
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Reason</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLeaves.map(leave => (
-                <tr key={leave.id}>
-                  <td>
-                    <div className="employee-profile">
-                      <div className="profile-avatar">
-                        {leave.employeeName.charAt(0)}
-                      </div>
-                      <span>{leave.employeeName}</span>
-                    </div>
-                  </td>
-                  <td>{format(new Date(leave.startDate), 'MMM dd, yyyy')}</td>
-                  <td>{format(new Date(leave.endDate), 'MMM dd, yyyy')}</td>
-                  <td>{leave.reason}</td>
-                  <td>
-                    <span className={`status-badge ${leave.status}`}>
-                      {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="dropdown">
-                      <button className="dropdown-toggle">
-                        <MoreVertical size={18} />
-                      </button>
-                      <div className="dropdown-menu-leaves">
-                        <select 
-                          value={leave.status} 
-                          onChange={(e) => handleStatusChange(leave.id, e.target.value)}
-                          className={`status-select ${leave.status}`}
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="approved">Approved</option>
-                          <option value="rejected">Rejected</option>
-                        </select>
-                        <button 
-                          onClick={() => handleDeleteLeave(leave.id)} 
-                          className="delete"
-                        >
-                          <Trash2 size={14} /> Delete
-                        </button>
-                      </div>
-                    </div>
-                  </td>
+          {loading ? (
+            <div className="loading">Loading leaves...</div>
+          ) : (
+            <table className="leaves-table">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Type</th>
+                  <th>Reason</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredLeaves.map(leave => (
+                  <tr key={leave._id}>
+                    <td>
+                      <div className="employee-profile">
+                        <div className="profile-avatar">
+                          {leave.employee?.name?.charAt(0) || 'E'}
+                        </div>
+                        <span>{leave.employee?.name || 'Unknown'}</span>
+                      </div>
+                    </td>
+                    <td>{format(new Date(leave.startDate), 'MMM dd, yyyy')}</td>
+                    <td>{format(new Date(leave.endDate), 'MMM dd, yyyy')}</td>
+                    <td>{leave.type}</td>
+                    <td>{leave.reason}</td>
+                    <td>
+                      <span className={`status-badge ${leave.status.toLowerCase()}`}>
+                        {leave.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="dropdown">
+                        <button className="dropdown-toggle">
+                          <MoreVertical size={18} />
+                        </button>
+                        <div className="dropdown-menu-leaves">
+                          <button onClick={() => {
+                            setSelectedLeave(leave);
+                            setIsModalOpen(true);
+                          }}>
+                            <Edit size={14} /> Edit
+                          </button>
+                          {(user.role === 'HR' || user.role === 'admin') && (
+                            <select 
+                              value={leave.status} 
+                              onChange={(e) => handleStatusChange(leave._id, e.target.value)}
+                              className={`status-select ${leave.status.toLowerCase()}`}
+                            >
+                              <option value="Pending">Pending</option>
+                              <option value="Approved">Approved</option>
+                              <option value="Rejected">Rejected</option>
+                            </select>
+                          )}
+                          {leave.documents?.length > 0 && (
+                            <a 
+                              href={`http://localhost:5000/api/v1/leaves/${leave._id}/documents/${leave.documents[0]}`}
+                              download
+                              className="download-link"
+                            >
+                              <Download size={14} /> Download
+                            </a>
+                          )}
+                          <button 
+                            onClick={() => handleDeleteLeave(leave._id)} 
+                            className="delete"
+                          >
+                            <Trash2 size={14} /> Delete
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         <div className="leaves-calendar">
@@ -198,10 +246,11 @@ const LeavesPage = () => {
             ))}
             {days.map(day => {
               const dayLeaves = leaves.filter(leave => {
-                if (leave.status !== 'approved') return false;
-                const leaveStart = new Date(leave.startDate);
-                const leaveEnd = new Date(leave.endDate);
-                return isWithinInterval(day, { start: leaveStart, end: leaveEnd });
+                if (leave.status !== 'Approved') return false;
+                return isWithinInterval(day, { 
+                  start: new Date(leave.startDate), 
+                  end: new Date(leave.endDate) 
+                });
               });
               
               return (
@@ -211,8 +260,8 @@ const LeavesPage = () => {
                 >
                   <div className="day-number">{format(day, 'd')}</div>
                   {dayLeaves.map(leave => (
-                    <div key={leave.id} className="leave-event">
-                      {leave.employeeName}
+                    <div key={leave._id} className="leave-event">
+                      {leave.employee?.name || 'Unknown'}
                     </div>
                   ))}
                 </div>
@@ -221,14 +270,22 @@ const LeavesPage = () => {
           </div>
         </div>
       </div>
-    <Modal 
+
+      <Modal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)}
-        title="Add New Leave"
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedLeave(null);
+        }}
+        title={selectedLeave ? `Edit Leave` : 'Create New Leave'}
       >
         <LeaveForm 
-          onSubmitSuccess={handleAddLeaveSuccess} 
-          onCancel={() => setIsModalOpen(false)} 
+          leave={selectedLeave}
+          onSubmitSuccess={selectedLeave ? handleUpdateLeaveSuccess : handleAddLeaveSuccess}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setSelectedLeave(null);
+          }}
         />
       </Modal>
     </div>
@@ -236,5 +293,3 @@ const LeavesPage = () => {
 };
 
 export default LeavesPage;
-
-
