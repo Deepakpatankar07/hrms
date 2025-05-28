@@ -12,23 +12,10 @@ const attendanceSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Present', 'Absent', 'Half Day', 'On Leave'],
+    enum: ['Present', 'Absent'],
     default: 'Present'
   },
-  checkIn: {
-    type: Date
-  },
-  checkOut: {
-    type: Date
-  },
-  notes: {
-    type: String
-  },
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
-  }
+
 });
 
 // Prevent duplicate attendance for same employee on same date

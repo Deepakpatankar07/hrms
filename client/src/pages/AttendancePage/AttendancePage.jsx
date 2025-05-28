@@ -1,55 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../components/Header/Header.jsx';
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
 import Filter from '../../components/Filter/Filter.jsx';
 import { MoreVertical, CheckCircle, XCircle } from 'react-feather';
 import './AttendancePage.css';
+import axios from 'axios';
 
 const AttendancePage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [attendance, setAttendance] = useState([
-    { 
-      id: '1',
-      name: 'Jane Copper', 
-      position: 'Full Time', 
-      department: 'Designer',
-      tasks: 'Dashboard Home page Alignment',
-      status: 'Present'
-    },
-    { 
-      id: '2',
-      name: 'Arlene McCoy', 
-      position: 'Full Time', 
-      department: 'Designer',
-      tasks: 'Dashboard Login page design, Dashboard Home page design',
-      status: 'Present'
-    },
-    { 
-      id: '3',
-      name: 'Cody Fisher', 
-      position: 'Senior', 
-      department: 'Backend Development',
-      tasks: '--',
-      status: 'Absent'
-    },
-    { 
-      id: '4',
-      name: 'Janney Wilson', 
-      position: 'Junior', 
-      department: 'Backend Development',
-      tasks: 'Dashboard login page integration',
-      status: 'Present'
-    },
-    { 
-      id: '5',
-      name: 'Leslie Alexander', 
-      position: 'Team Lead', 
-      department: 'Human Resource',
-      tasks: '4 scheduled interview, Sorting of resumes',
-      status: 'Present'
-    },
-  ]);
+  const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const statusOptions = [
     { value: '', label: 'All Status' },
@@ -57,23 +19,54 @@ const AttendancePage = () => {
     { value: 'Absent', label: 'Absent' },
   ];
 
+  // Fetch attendance data
+  useEffect(() => {
+    const fetchAttendance = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/v1/attendance`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setAttendance(response.data.data); 
+        setLoading(false);
+      } catch (err) {
+        setError(err.message || 'Error fetching attendance data');
+        setLoading(false);
+      }
+    };
+
+    fetchAttendance();
+  }, []);
+
   const filteredAttendance = attendance.filter(record => {
-    const matchesSearch = record.name.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = record.employee.name.toLowerCase().includes(search.toLowerCase());
     const matchesStatus = !statusFilter || record.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const toggleStatus = (employeeId) => {
-    setAttendance(attendance.map(employee => {
-      if (employee.id === employeeId) {
-        return {
-          ...employee,
-          status: employee.status === 'Present' ? 'Absent' : 'Present'
-        };
-      }
-      return employee;
-    }));
+  const toggleStatus = async (attendanceId, currentStatus) => {
+    const newStatus = currentStatus === 'Present' ? 'Absent' : 'Present';
+    
+    try {
+      const response = await axios.put(`http://localhost:5000/api/v1/attendance/${attendanceId}`, {
+        status: newStatus
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      setAttendance(attendance.map(record => 
+        record._id === attendanceId ? response.data.data : record
+      ));
+    } catch (err) {
+      setError(err.message || 'Error updating attendance status');
+    }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="main-content">
@@ -101,32 +94,30 @@ const AttendancePage = () => {
               <th>Profile</th>
               <th>Employee Name</th>
               <th>Position</th>
-              <th>Department</th>
               <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {filteredAttendance.map(employee => (
-              <tr key={employee.id}>
+            {filteredAttendance.map(record => (
+              <tr key={record._id}>
                 <td>
                   <div className="employee-profile">
                     <div className="profile-avatar">
-                      {employee.name.charAt(0)}
+                      {record.employee.name.charAt(0)}
                     </div>
                   </div>
                 </td>
-                <td>{employee.name}</td>
-                <td>{employee.position}</td>
-                <td>{employee.department}</td>
+                <td>{record.employee.name}</td>
+                <td>{record.employee.position}</td>
                 <td>
-                  <span className={`status-badge ${employee.status.toLowerCase()}`}>
-                    {employee.status === 'Present' ? (
+                  <span className={`status-badge ${record.status.toLowerCase()}`}>
+                    {record.status === 'Present' ? (
                       <CheckCircle size={14} />
                     ) : (
                       <XCircle size={14} />
                     )}
-                    {employee.status}
+                    {record.status}
                   </span>
                 </td>
                 <td>
@@ -135,8 +126,8 @@ const AttendancePage = () => {
                       <MoreVertical size={18} />
                     </button>
                     <div className="dropdown-menu-attendance">
-                      <button onClick={() => toggleStatus(employee.id)}>
-                        Mark as {employee.status === 'Present' ? 'Absent' : 'Present'}
+                      <button onClick={() => toggleStatus(record._id, record.status)}>
+                        Mark as {record.status === 'Present' ? 'Absent' : 'Present'}
                       </button>
                     </div>
                   </div>

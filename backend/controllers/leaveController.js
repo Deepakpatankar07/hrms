@@ -95,15 +95,6 @@ exports.updateLeave = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Make sure user is HR or admin
-  if (req.user.role !== 'admin') {
-    return next(
-      new ErrorResponse(
-        `User ${req.user.id} is not authorized to update this leave`,
-        401
-      )
-    );
-  }
 
   leave = await Leave.findByIdAndUpdate(req.params.id, req.body, {
     new: true,

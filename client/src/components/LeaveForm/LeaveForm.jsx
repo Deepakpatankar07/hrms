@@ -1,36 +1,39 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Button from '../Button/Button';
-import './LeaveForm.css';
-import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Button from "../Button/Button";
+import "./LeaveForm.css";
+import { useAuth } from "../../context/AuthContext";
 
 const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
-    employee: '',
-    startDate: '',
-    endDate: '',
-    type: 'Sick',
-    reason: '',
-    status: 'Pending'
+    employee: "",
+    startDate: "",
+    endDate: "",
+    type: "Sick",
+    reason: "",
+    status: "Pending",
   });
   const [document, setDocument] = useState(null);
   const [employees, setEmployees] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchActiveEmployees = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/v1/employees?status=Active', {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:5000/api/v1/employees?status=Active",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         setEmployees(response.data.data);
       } catch (err) {
-        console.error('Failed to fetch employees', err);
+        console.error("Failed to fetch employees", err);
       }
     };
 
@@ -38,19 +41,19 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
 
     if (leave) {
       setFormData({
-        employee: leave.employee?._id || leave.employee || '',
-        startDate: leave.startDate ? formatDateForInput(leave.startDate) : '',
-        endDate: leave.endDate ? formatDateForInput(leave.endDate) : '',
-        type: leave.type || 'Sick',
-        reason: leave.reason || '',
-        status: leave.status || 'Pending'
+        employee: leave.employee?._id || leave.employee || "",
+        startDate: leave.startDate ? formatDateForInput(leave.startDate) : "",
+        endDate: leave.endDate ? formatDateForInput(leave.endDate) : "",
+        type: leave.type || "Sick",
+        reason: leave.reason || "",
+        status: leave.status || "Pending",
       });
     }
   }, [leave]);
 
   const formatDateForInput = (dateString) => {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   const handleInputChange = (e) => {
@@ -64,28 +67,33 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
-    if (!formData.employee || !formData.startDate || !formData.endDate || !formData.reason) {
-      setError('Please fill all required fields');
+    if (
+      !formData.employee ||
+      !formData.startDate ||
+      !formData.endDate ||
+      !formData.reason
+    ) {
+      setError("Please fill all required fields");
       setLoading(false);
       return;
     }
 
     const data = new FormData();
-    data.append('employee', formData.employee);
-    data.append('startDate', formData.startDate);
-    data.append('endDate', formData.endDate);
-    data.append('type', formData.type);
-    data.append('reason', formData.reason);
-    data.append('status', formData.status);
+    data.append("employee", formData.employee);
+    data.append("startDate", formData.startDate);
+    data.append("endDate", formData.endDate);
+    data.append("type", formData.type);
+    data.append("reason", formData.reason);
+    data.append("status", formData.status);
     if (document) {
-      data.append('document', document);
+      data.append("document", document);
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       let response;
 
       if (leave) {
@@ -95,28 +103,30 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
           data,
           {
             headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            }
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
       } else {
         // Create new leave
         response = await axios.post(
-          'http://localhost:5000/api/v1/leaves',
+          "http://localhost:5000/api/v1/leaves",
           data,
           {
             headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            }
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
       }
 
       onSubmitSuccess(response.data);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to process leave request');
+      setError(
+        err.response?.data?.message || "Failed to process leave request"
+      );
     } finally {
       setLoading(false);
     }
@@ -134,10 +144,10 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
             value={formData.employee}
             onChange={handleInputChange}
             required
-            disabled={loading || (leave && leave.status !== 'Pending')}
+            disabled={loading || (leave && leave.status !== "Pending")}
           >
             <option value="">Select Employee</option>
-            {employees.map(emp => (
+            {employees.map((emp) => (
               <option key={emp._id} value={emp._id}>
                 {emp.name} ({emp.position})
               </option>
@@ -152,7 +162,7 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
             value={formData.type}
             onChange={handleInputChange}
             required
-            disabled={loading || (leave && leave.status !== 'Pending')}
+            disabled={loading || (leave && leave.status !== "Pending")}
           >
             <option value="Sick">Sick Leave</option>
             <option value="Vacation">Vacation</option>
@@ -171,7 +181,7 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
             value={formData.startDate}
             onChange={handleInputChange}
             required
-            disabled={loading || (leave && leave.status !== 'Pending')}
+            disabled={loading || (leave && leave.status !== "Pending")}
           />
         </div>
 
@@ -183,7 +193,7 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
             value={formData.endDate}
             onChange={handleInputChange}
             required
-            disabled={loading || (leave && leave.status !== 'Pending')}
+            disabled={loading || (leave && leave.status !== "Pending")}
           />
         </div>
 
@@ -195,27 +205,25 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
             onChange={handleInputChange}
             placeholder="Enter reason for leave"
             required
-            disabled={loading || (leave && leave.status !== 'Pending')}
+            disabled={loading || (leave && leave.status !== "Pending")}
           />
         </div>
 
-        {user.role === 'HR' || user.role === 'admin' ? (
-          <div className="form-group-leave">
-            <label>Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-              disabled={loading}
-            >
-              <option value="Pending">Pending</option>
-              <option value="Approved">Approved</option>
-              <option value="Rejected">Rejected</option>
-            </select>
-          </div>
-        ) : null}
-
         <div className="form-group-leave">
+          <label>Status</label>
+          <select
+            name="status"
+            value={formData.status}
+            onChange={handleInputChange}
+            disabled={loading}
+          >
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+
+        {/* <div className="form-group-leave">
           <label>Supporting Document</label>
           <input
             type="file"
@@ -224,9 +232,9 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
             disabled={loading || (leave && leave.status !== 'Pending')}
           />
           <small>PDF, Word, or Image files (max 5MB)</small>
-        </div>
+        </div> */}
 
-        {leave?.documents?.length > 0 && (
+        {/* {leave?.documents?.length > 0 && (
           <div className="form-group-leave">
             <label>Current Documents</label>
             <div className="document-list">
@@ -245,7 +253,7 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
               ))}
             </div>
           </div>
-        )}
+        )} */}
 
         <div className="form-actions-leave">
           <Button
@@ -256,12 +264,14 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
           >
             Cancel
           </Button>
-          <Button 
-            type="submit" 
-            variant="purple"
-            disabled={loading}
-          >
-            {loading ? (leave ? 'Updating...' : 'Submitting...') : (leave ? 'Update' : 'Submit')}
+          <Button type="submit" variant="purple" disabled={loading}>
+            {loading
+              ? leave
+                ? "Updating..."
+                : "Submitting..."
+              : leave
+              ? "Update"
+              : "Submit"}
           </Button>
         </div>
       </form>
