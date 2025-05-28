@@ -213,27 +213,26 @@ const EmployeesPage = () => {
   const [error, setError] = useState("");
 
   // Fetch employees on component mount
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        "http://localhost:5000/api/v1/employees",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      console.log("Data", response.data);
+      setEmployees(response.data.data || response.data.employees || []);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch employees");
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/employees",
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        console.log("Data", response.data);
-        setEmployees(response.data.data || response.data.employees || []);
-      } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch employees");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchEmployees();
   }, []);
 
@@ -267,12 +266,13 @@ const EmployeesPage = () => {
     setEmployees(
       employees.map((emp) =>
         emp.id === updatedEmployee.id || emp._id === updatedEmployee._id
-          ? updatedEmployee
+          ? {...emp, ...updatedEmployee }
           : emp
       )
     );
     setIsModalOpen(false);
     setSelectedEmployee(null);
+    fetchEmployees();
   };
 
   const handleDeleteEmployee = async (employeeId) => {

@@ -29,8 +29,5 @@ router
   .put(protect, updateEmployee)
   .delete(protect, deleteEmployee);
 
-router
-  .route('/:id/photo')
-  .put(protect, upload, uploadPhoto);
 
 module.exports = router;

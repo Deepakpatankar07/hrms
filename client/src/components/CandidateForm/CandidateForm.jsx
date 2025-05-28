@@ -59,8 +59,8 @@ const CandidateForm = ({ onSubmitSuccess, onCancel }) => {
         Authorization: `Bearer ${token}`
       },
     });
-    onSubmitSuccess(response.data);
-    window.location.reload(); 
+    // console.log('Candidate created:', response.data.data);
+    onSubmitSuccess(response.data.data);
   } catch (err) {
     setError(err.response?.data?.message || 'Failed to create candidate');
   } finally {
@@ -71,7 +71,7 @@ const CandidateForm = ({ onSubmitSuccess, onCancel }) => {
   return (
     <div className="candidate-form-container">
       <form onSubmit={handleSubmit} className="candidate-form">
-        {error && <p className="form-error">{error}</p>}
+        {error && <p className="form-error-candidate">{error}</p>}
         <div className="form-group-candidate">
           <label>Name*</label>
           <input
@@ -118,10 +118,11 @@ const CandidateForm = ({ onSubmitSuccess, onCancel }) => {
             disabled={loading}
           >
             <option value="">Select Position</option>
-            <option value="Senior Developer">Senior Developer</option>
             <option value="Human Resource Lead">Human Resource Lead</option>
-            <option value="Full Time Designer">Full Time Designer</option>
-            <option value="Full Time Developer">Full Time Developer</option>
+            <option value="Team Lead">Team Lead</option>
+            <option value="Senior Developer">Senior Developer</option>
+            <option value="Junior Developer">Junior Developer</option>
+            <option value="Designer">Designer</option>
           </select>
         </div>
         <div className="form-group-candidate">

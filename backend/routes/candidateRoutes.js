@@ -9,8 +9,7 @@ const {
   downloadResume,
   moveToEmployee,
 } = require("../controllers/candidateController");
-const { protect, authorize } = require("../middleware/auth");
-const upload = require("../middleware/upload");
+const { protect } = require("../middleware/auth");
 const advancedResults = require("../middleware/advancedResults");
 const Candidate = require("../models/CandidateModel");
 
@@ -18,15 +17,8 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(
-    // protect,
-    // authorize('hr', 'admin'),
-    advancedResults(Candidate),
-    getCandidates
-  )
-  .post(protect, 
-    // authorize("hr", "admin"), 
-    createCandidate);
+  .get(advancedResults(Candidate), getCandidates)
+  .post(protect,  createCandidate);
 
 router
   .route("/:id")
@@ -36,11 +28,9 @@ router
 
 router
   .route("/:id/resume")
-  // .put(protect, authorize("hr", "admin"), upload, uploadResume)
+  // .put(protect, upload, uploadResume)
   .get(protect, downloadResume);
 
-router
-  .route("/move-to-employee/:id")
-  .post(moveToEmployee);
+router.route("/move-to-employee/:id").post(moveToEmployee);
 
 module.exports = router;

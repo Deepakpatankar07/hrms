@@ -29,9 +29,13 @@
   font-size: 14px;
 }
 
-.form-error {
+.form-error-candidate {
+  display: flex;
+  width: 100%;
+  justify-content: center;
   color: #FF3B30;
   font-size: 14px;
+  background-color: #ed9f9f;
 }
 
 .form-actions-candidate {

@@ -11,10 +11,7 @@ router.post(
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please include a valid email').isEmail(),
     check('password', 'Please enter a password with 8 or more characters').isLength({ min: 8 }),
-    // check('role', 'Role is required').not().isEmpty()
   ],
-  // auth.protect,
-  // auth.authorize('admin'),
   authController.register
 );
 

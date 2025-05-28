@@ -51,21 +51,21 @@ const LeavesPage = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handleDeleteLeave = async (id) => {
-    if (window.confirm('Are you sure you want to delete this leave record?')) {
-      try {
-        const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/v1/leaves/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLeaves(leaves.filter((leave) => leave._id !== id));
-      } catch (err) {
-        console.error('Failed to delete leave', err);
-      }
-    }
-  };
+  // const handleDeleteLeave = async (id) => {
+  //   if (window.confirm('Are you sure you want to delete this leave record?')) {
+  //     try {
+  //       const token = localStorage.getItem('token');
+  //       await axios.delete(`http://localhost:5000/api/v1/leaves/${id}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       setLeaves(leaves.filter((leave) => leave._id !== id));
+  //     } catch (err) {
+  //       console.error('Failed to delete leave', err);
+  //     }
+  //   }
+  // };
 
   const handleAddLeaveSuccess = (newLeave) => {
     setLeaves([...leaves, newLeave]);
@@ -197,12 +197,12 @@ const LeavesPage = () => {
                               <Download size={14} /> Download
                             </a>
                           )}
-                          <button
+                          {/* <button
                             onClick={() => handleDeleteLeave(leave._id)}
                             className="delete"
                           >
                             <Trash2 size={14} /> Delete
-                          </button>
+                          </button> */}
                         </div>
                       </div>
                     </td>

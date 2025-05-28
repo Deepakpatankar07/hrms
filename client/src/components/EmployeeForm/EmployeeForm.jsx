@@ -63,6 +63,7 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
           }
         }
       );
+      // console.log('Employee updated successfully:', response.data);
       onSubmitSuccess(response.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update employee');
@@ -125,11 +126,11 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
             disabled={loading}
           >
             <option value="">Select Position</option>
-            <option value="Intern">Intern</option>
-            <option value="Full Time">Full Time</option>
-            <option value="Junior">Junior</option>
-            <option value="Senior">Senior</option>
+            <option value="Human Resource Lead">Human Resource Lead</option>
             <option value="Team Lead">Team Lead</option>
+            <option value="Senior Developer">Senior Developer</option>
+            <option value="Junior Developer">Junior Developer</option>
+            <option value="Designer">Designer</option>
           </select>
         </div>
         
@@ -187,7 +188,7 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
           </select>
         </div>
         
-        <div className="form-group-employee">
+        {/* <div className="form-group-employee">
           <label>Role</label>
           <select
             name="role"
@@ -199,7 +200,7 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
             <option value="manager">Manager</option>
             <option value="admin">Admin</option>
           </select>
-        </div>
+        </div> */}
         
         <div className="form-actions-employee">
           <Button

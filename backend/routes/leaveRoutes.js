@@ -5,12 +5,10 @@ const {
   createLeave,
   updateLeave,
   deleteLeave,
-  uploadDocument,
   downloadDocument,
   getCalendarLeaves
 } = require('../controllers/leaveController');
-const { protect, authorize } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const { protect} = require('../middleware/auth');
 const advancedResults = require('../middleware/advancedResults');
 const Leave = require('../models/LeaveModel');
 
@@ -35,9 +33,6 @@ router
   .put(protect, updateLeave)
   .delete(protect, deleteLeave);
 
-router
-  .route('/:id/documents')
-  .put(protect, upload, uploadDocument);
 
 router
   .route('/:id/documents/:docId')
