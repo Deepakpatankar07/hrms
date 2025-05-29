@@ -24,7 +24,6 @@ exports.getAttendanceRecords = asyncHandler(async (req, res, next) => {
 exports.updateAttendanceRecord = asyncHandler(async (req, res, next) => {
     const { status } = req.body;
     
-    // Validate status
     if (!status || !['Present', 'Absent'].includes(status)) {
         return next(new ErrorResponse('Invalid status. Must be Present or Absent.', 400));
     }

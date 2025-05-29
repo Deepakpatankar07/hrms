@@ -60,11 +60,9 @@ exports.createCandidate = asyncHandler(async (req, res, next) => {
   const fileNamePrefix = `resume_${req.body.name.replace(/\s+/g, '_')}`;
 
   try {
-    // Upload file
     const { fileName } = await uploadFile(file, uploadPath, fileNamePrefix);
 
     console.log('File uploaded successfully:', fileName);
-    // Create candidate
     const candidateData = {
       ...req.body,
       resume: fileName,
@@ -77,7 +75,6 @@ exports.createCandidate = asyncHandler(async (req, res, next) => {
       data: candidate,
     });
   } catch (err) {
-    // Clean up the uploaded file if creation fails
     if (fileName) {
       try {
         await deleteFile(`${uploadPath}/${fileName}`);
@@ -155,7 +152,7 @@ exports.downloadResume = asyncHandler(async (req, res, next) => {
 
 // @desc    Move candidate to employee
 // @route   POST /api/v1/candidates/move-to-employee/:id
-// @access  Private/Admin
+// @access  Private
 exports.moveToEmployee = asyncHandler(async (req, res, next) => {
   const candidate = await Candidate.findById(req.params.id);
 
@@ -165,7 +162,6 @@ exports.moveToEmployee = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Check if candidate is hired
   if (candidate.status !== "Selected") {
     return next(
       new ErrorResponse(
@@ -175,7 +171,6 @@ exports.moveToEmployee = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Create employee from candidate data
   const employeeData = {
     name: candidate.name,
     email: candidate.email,
@@ -186,7 +181,6 @@ exports.moveToEmployee = asyncHandler(async (req, res, next) => {
     status: "Active",
   };
 
-  // In a real app, you would create an Employee here
   const employee = await Employee.create(employeeData);
   await Attendence.create({
     employee: employee._id,
@@ -197,6 +191,6 @@ exports.moveToEmployee = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    data: employeeData, // In real app, return the created employee
+    data: employeeData,
   });
 });

@@ -9,10 +9,8 @@ const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
-  // Log to console for dev
   console.error(err.stack);
 
-  // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     const message = `Resource not found with id of ${err.value}`;
     error = new ErrorResponse(message, 404);
@@ -36,7 +34,5 @@ const errorHandler = (err, req, res, next) => {
   });
 };
  
-// Export the errorHandler directly
 module.exports = errorHandler;
-// If you need ErrorResponse elsewhere, export it separately
 module.exports.ErrorResponse = ErrorResponse;

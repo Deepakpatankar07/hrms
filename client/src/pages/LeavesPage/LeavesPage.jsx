@@ -51,22 +51,6 @@ const LeavesPage = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // const handleDeleteLeave = async (id) => {
-  //   if (window.confirm('Are you sure you want to delete this leave record?')) {
-  //     try {
-  //       const token = localStorage.getItem('token');
-  //       await axios.delete(`http://localhost:5000/api/v1/leaves/${id}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-  //       setLeaves(leaves.filter((leave) => leave._id !== id));
-  //     } catch (err) {
-  //       console.error('Failed to delete leave', err);
-  //     }
-  //   }
-  // };
-
   const handleAddLeaveSuccess = (newLeave) => {
     setLeaves([...leaves, newLeave]);
     setIsModalOpen(false);
@@ -83,7 +67,6 @@ const LeavesPage = () => {
     fetchLeaves();
   };
 
-  // Calendar generation
   const start = startOfMonth(selectedDate);
   const end = endOfMonth(selectedDate);
   const days = eachDayOfInterval({ start, end });
@@ -197,12 +180,7 @@ const LeavesPage = () => {
                               <Download size={14} /> Download
                             </a>
                           )}
-                          {/* <button
-                            onClick={() => handleDeleteLeave(leave._id)}
-                            className="delete"
-                          >
-                            <Trash2 size={14} /> Delete
-                          </button> */}
+                          
                         </div>
                       </div>
                     </td>
@@ -245,7 +223,6 @@ const LeavesPage = () => {
                 const leaveStart = new Date(leave.startDate);
                 const leaveEnd = new Date(leave.endDate);
 
-                // Reset times to midnight for accurate date comparison
                 leaveStart.setHours(0, 0, 0, 0);
                 leaveEnd.setHours(0, 0, 0, 0);
                 const currentDay = new Date(day);

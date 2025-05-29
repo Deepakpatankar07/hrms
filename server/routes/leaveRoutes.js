@@ -4,7 +4,7 @@ const {
   getLeave,
   createLeave,
   updateLeave,
-  deleteLeave,
+  // deleteLeave,
   downloadDocument,
   getCalendarLeaves
 } = require('../controllers/leaveController');
@@ -31,7 +31,7 @@ router
   .route('/:id')
   .get(protect, getLeave)
   .put(protect, updateLeave)
-  .delete(protect, deleteLeave);
+  // .delete(protect, deleteLeave);
 
 
 router

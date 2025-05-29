@@ -60,7 +60,6 @@ exports.createLeave = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Check if employee has attendance record as present
   const attendance = await Attendance.findOne({
     employee: req.body.employee,
     status: 'Present'
@@ -107,35 +106,35 @@ exports.updateLeave = asyncHandler(async (req, res, next) => {
   });
 });
 
-// @desc    Delete leave
-// @route   DELETE /api/v1/leaves/:id
-// @access  Private/Admin
-exports.deleteLeave = asyncHandler(async (req, res, next) => {
-  const leave = await Leave.findById(req.params.id);
+// // @desc    Delete leave
+// // @route   DELETE /api/v1/leaves/:id
+// // @access  Private/Admin
+// exports.deleteLeave = asyncHandler(async (req, res, next) => {
+//   const leave = await Leave.findById(req.params.id);
 
-  if (!leave) {
-    return next(
-      new ErrorResponse(`Leave not found with id of ${req.params.id}`, 404)
-    );
-  }
+//   if (!leave) {
+//     return next(
+//       new ErrorResponse(`Leave not found with id of ${req.params.id}`, 404)
+//     );
+//   }
 
-  // Delete documents if any
-  if (leave.documents && leave.documents.length > 0) {
-    leave.documents.forEach(doc => {
-      const filePath = path.join(__dirname, `../uploads/${doc}`);
-      fs.unlink(filePath, err => {
-        if (err) console.error(err);
-      });
-    });
-  }
+//   // Delete documents if any
+//   if (leave.documents && leave.documents.length > 0) {
+//     leave.documents.forEach(doc => {
+//       const filePath = path.join(__dirname, `../uploads/${doc}`);
+//       fs.unlink(filePath, err => {
+//         if (err) console.error(err);
+//       });
+//     });
+//   }
 
-  await leave.remove();
+//   await leave.remove();
 
-  res.status(200).json({
-    success: true,
-    data: {}
-  });
-});
+//   res.status(200).json({
+//     success: true,
+//     data: {}
+//   });
+// });
 
 // @desc    Upload document for leave
 // @route   PUT /api/v1/leaves/:id/documents

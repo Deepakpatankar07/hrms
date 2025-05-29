@@ -18,7 +18,6 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Populate form with employee data when component mounts or employee prop changes
   useEffect(() => {
     if (employee) {
       setFormData({
@@ -45,7 +44,6 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
     setError('');
     setLoading(true);
 
-    // Basic validation
     if (!formData.name || !formData.email || !formData.phone || !formData.position) {
       setError('Please fill all required fields');
       setLoading(false);
@@ -134,17 +132,6 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
           </select>
         </div>
         
-        {/* <div className="form-group-employee">
-          <label>Department</label>
-          <input
-            type="text"
-            name="department"
-            value={formData.department}
-            onChange={handleInputChange}
-            placeholder="Enter department"
-            disabled={loading}
-          />
-        </div> */}
         
         <div className="form-group-employee">
           <label>Experience (years)</label>
@@ -160,18 +147,6 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
           />
         </div>
         
-        {/* <div className="form-group-employee">
-          <label>Salary</label>
-          <input
-            type="number"
-            name="salary"
-            value={formData.salary}
-            onChange={handleInputChange}
-            placeholder="Enter salary"
-            min="0"
-            disabled={loading}
-          />
-        </div> */}
         
         <div className="form-group-employee">
           <label>Status</label>
@@ -187,20 +162,7 @@ const EmployeeForm = ({ employee, onSubmitSuccess, onCancel }) => {
             <option value="Terminated">Terminated</option>
           </select>
         </div>
-        
-        {/* <div className="form-group-employee">
-          <label>Role</label>
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleInputChange}
-            disabled={loading}
-          >
-            <option value="employee">Employee</option>
-            <option value="manager">Manager</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div> */}
+       
         
         <div className="form-actions-employee">
           <Button

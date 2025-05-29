@@ -19,7 +19,6 @@ const AttendancePage = () => {
     { value: 'Absent', label: 'Absent' },
   ];
 
-  // Fetch attendance data
   useEffect(() => {
     const fetchAttendance = async () => {
       try {

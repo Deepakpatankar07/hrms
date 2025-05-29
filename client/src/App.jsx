@@ -13,69 +13,8 @@ import AttendancePage from "./pages/AttendancePage/AttendancePage.jsx";
 import LeavesPage from "./pages/LeavesPage/LeavesPage.jsx";
 import "./App.css";
 import RegisterPage from "./pages/RegisterPage/RegisterPage.jsx";
-
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
-
-// // const App = () => {
-// //   return (
-// //     <>
-// //       <Router>
-// //         <Routes>
-// //           <Route path="/login" element={<LoginPage />} />
-// //           <Route
-// //             path="/*"
-// //             element={
-// //               <>
-// //                 <Sidebar />
-// //                 <div className="container">
-// //                   <Routes>
-// //                     <Route path="/" element={<DashboardPage />} />
-// //                     <Route path="/dashboard" element={<DashboardPage />} />
-// //                     <Route path="/candidates" element={<CandidatesPage />} />
-// //                     <Route path="/employees" element={<EmployeesPage />} />
-// //                     <Route path="/attendance" element={<AttendancePage />} />
-// //                     <Route path="/leaves" element={<LeavesPage />} />
-// //                   </Routes>
-// //                 </div>
-// //               </>
-// //             }
-// //           />
-// //         </Routes>
-// //       </Router>
-// //     </>
-// //   );
-// // };
-
-// // const App = () => {
-// //   return (
-// <Router>
-//   <Routes>
-//     <Route path="/login" element={<LoginPage />} />
-//     <Route path="/register" element={<RegisterPage />} />
-//     <Route
-//       element={
-//         <div className="app-layout">
-//           <Sidebar />
-//           <div className="container">
-//             <Outlet />
-//           </div>
-//         </div>
-//       }
-//     >
-//       <Route path="/" element={<DashboardPage />} />
-//       <Route path="/dashboard" element={<DashboardPage />} />
-//       <Route path="/candidates" element={<CandidatesPage />} />
-//       <Route path="/employees" element={<EmployeesPage />} />
-//       <Route path="/attendance" element={<AttendancePage />} />
-//       <Route path="/leaves" element={<LeavesPage />} />
-//     </Route>
-//   </Routes>
-// </Router>;
-// //   );
-// // };
-
-// // export default App;
 
 function App() {
   return (

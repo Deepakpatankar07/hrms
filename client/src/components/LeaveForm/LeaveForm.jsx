@@ -223,37 +223,6 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
           </select>
         </div>
 
-        {/* <div className="form-group-leave">
-          <label>Supporting Document</label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-            disabled={loading || (leave && leave.status !== 'Pending')}
-          />
-          <small>PDF, Word, or Image files (max 5MB)</small>
-        </div> */}
-
-        {/* {leave?.documents?.length > 0 && (
-          <div className="form-group-leave">
-            <label>Current Documents</label>
-            <div className="document-list">
-              {leave.documents.map((doc, index) => (
-                <div key={index} className="document-item">
-                  <span>{doc}</span>
-                  <a 
-                    href={`http://localhost:5000/api/v1/leaves/${leave._id}/documents/${doc}`}
-                    download
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Download
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        )} */}
 
         <div className="form-actions-leave">
           <Button

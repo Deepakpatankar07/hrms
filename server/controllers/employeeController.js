@@ -38,7 +38,7 @@ exports.getEmployee = asyncHandler(async (req, res, next) => {
 
 // @desc    Create new employee
 // @route   POST /api/v1/employees
-// @access  Private/Admin
+// @access  Private
 exports.createEmployee = asyncHandler(async (req, res, next) => {
    const existingEmployee = await Employee.findOne({ email: req.body.email });
   if (existingEmployee) {
@@ -79,7 +79,7 @@ exports.updateEmployee = asyncHandler(async (req, res, next) => {
 
 // @desc    Delete employee
 // @route   DELETE /api/v1/employees/:id
-// @access  Private/Admin
+// @access  Private
 exports.deleteEmployee = asyncHandler(async (req, res, next) => {
   const employee = await Employee.findById(req.params.id);
 
@@ -88,15 +88,6 @@ exports.deleteEmployee = asyncHandler(async (req, res, next) => {
       new ErrorResponse(`Employee not found with id of ${req.params.id}`, 404)
     );
   }
-
-  // Delete photo if exists
-  // if (employee.photo !== 'default.jpg') {
-  //   const filePath = path.join(__dirname, `../uploads/${employee.photo}`);
-  //   fs.unlink(filePath, err => {
-  //     if (err) console.error(err);
-  //   });
-  // }
-
   await  Employee.findByIdAndDelete(req.params.id ,{ new: true});
 
   res.status(200).json({
@@ -121,12 +112,10 @@ exports.uploadPhoto = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Please upload a file`, 400));
   }
 
-  // Check if file is image
   if (!req.file.mimetype.startsWith('image')) {
     return next(new ErrorResponse(`Please upload an image file`, 400));
   }
 
-  // Check file size
   if (req.file.size > process.env.MAX_FILE_UPLOAD) {
     return next(
       new ErrorResponse(
@@ -136,7 +125,6 @@ exports.uploadPhoto = asyncHandler(async (req, res, next) => {
     );
   }
 
-  // Delete old photo if exists
   if (employee.photo !== 'default.jpg') {
     const oldFilePath = path.join(__dirname, `../uploads/${employee.photo}`);
     fs.unlink(oldFilePath, err => {
@@ -144,7 +132,6 @@ exports.uploadPhoto = asyncHandler(async (req, res, next) => {
     });
   }
 
-  // Update employee with new photo
   await Employee.findByIdAndUpdate(req.params.id, { photo: req.file.filename });
 
   res.status(200).json({

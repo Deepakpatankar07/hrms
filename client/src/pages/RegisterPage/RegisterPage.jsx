@@ -17,7 +17,6 @@ const RegisterPage = () => {
     e.preventDefault();
     setError("");
 
-    // Basic validation
     if (password !== confirmPassword) {
       return setError("Passwords do not match");
     }
@@ -25,17 +24,14 @@ const RegisterPage = () => {
     try {
       setLoading(true);
       
-      // Make API call to register endpoint
       const response = await axios.post("http://localhost:5000/api/v1/auth/register", {
         name: fullName,
         email,
         password,
-        role: "hr" // All ready Default role in backend is "hr"
       });
 
-      // Handle successful registration
       console.log("Registration successful:", response.data);
-      navigate("/login"); // Redirect to login page after successful registration
+      navigate("/login");
       
     } catch (err) {
       console.error("Registration error:", err.response?.data || err.message);

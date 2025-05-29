@@ -1,53 +1,3 @@
-// // src/context/AuthContext.js
-// import { createContext, useContext, useState, useEffect } from "react";
-// import axios from "axios";
-
-// const AuthContext = createContext();
-
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-//   const [token, setToken] = useState(localStorage.getItem("token"));
-//   const [loading, setLoading] = useState(true);
-
-//   // Fetch user data when token changes
-//   useEffect(() => {
-//     const fetchUser = async () => {
-//       try {
-//         if (token) {
-//           const response = await axios.get("http://localhost:5000/api/v1/auth/me", {
-//             headers: {
-//               Authorization: `Bearer ${token}`
-//             }
-//           });
-//           setUser(response.data.data);
-//         }
-//       } catch (err) {
-//         console.error("Failed to fetch user data", err);
-//         logout();
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchUser();
-//   }, [token]);
-
-//   const logout = () => {
-//     localStorage.removeItem("token");
-//     setToken(null);
-//     setUser(null);
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, token, loading, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-// export const useAuth = () => useContext(AuthContext);
-
-
-
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -74,7 +24,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Initialize auth state
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -101,9 +50,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     initializeAuth();
-  }, []); // Empty dependency array to run only once on mount
+  }, []); 
 
-  // Auto-logout when token expires
   useEffect(() => {
     const checkAuth = () => {
       if (token && isTokenExpired(token)) {
@@ -111,8 +59,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    // Check every 30 seconds
-    const interval = setInterval(checkAuth, 30000);
+    const interval = setInterval(checkAuth, 60000);
     return () => clearInterval(interval);
   }, [token]);
 
@@ -130,7 +77,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", newToken);
       setToken(newToken);
       
-      // Fetch user data after login
       const userResponse = await axios.get("http://localhost:5000/api/v1/auth/me", {
         headers: {
           Authorization: `Bearer ${newToken}`

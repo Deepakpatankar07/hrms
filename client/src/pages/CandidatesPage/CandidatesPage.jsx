@@ -18,7 +18,6 @@ const CandidatesPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch candidates on component mount
   const fetchCandidates = async () => {
     try {
       setLoading(true);
@@ -72,7 +71,6 @@ const CandidatesPage = () => {
         }
       );
 
-      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;

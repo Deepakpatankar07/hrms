@@ -1,11 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
-const morgan = require('morgan');
 const path = require('path');
 
 const errorHandler = require('./utils/errorHandler');
@@ -23,29 +19,16 @@ const app = express();
 // Body parser
 app.use(express.json({ limit: '10kb' }));
 
-// Dev logging middleware
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
 
 // Set security headers
 app.use(helmet());
 
 // Enable CORS
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*', // Allow all origins in development
+  origin: process.env.CORS_ORIGIN || '*', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true // Allow credentials if needed
+  credentials: true 
 }));
-
-// Sanitize data
-// app.use(mongoSanitize());
-
-// Prevent XSS attacks
-// app.use(xss());
-
-// Prevent parameter pollution
-// app.use(hpp());
 
 // Rate limiting
 const limiter = rateLimit({
