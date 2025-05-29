@@ -68,11 +68,13 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
       
+      console.log("Attempting login with email:", email);
+      
       const response = await axios.post("http://localhost:5000/api/v1/auth/login", {
         email,
         password
       });
-      
+      console.log("Login successful:", response.data);
       const { token: newToken } = response.data;
       localStorage.setItem("token", newToken);
       setToken(newToken);

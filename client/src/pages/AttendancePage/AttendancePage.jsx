@@ -19,22 +19,22 @@ const AttendancePage = () => {
     { value: 'Absent', label: 'Absent' },
   ];
 
+  const fetchAttendance = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/api/v1/attendance`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      console.log('Fetched attendance:', response.data.data);
+      setAttendance(response.data.data); 
+      setLoading(false);
+    } catch (err) {
+      setError(err.message || 'Error fetching attendance data');
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchAttendance = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/v1/attendance`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        setAttendance(response.data.data); 
-        setLoading(false);
-      } catch (err) {
-        setError(err.message || 'Error fetching attendance data');
-        setLoading(false);
-      }
-    };
-
     fetchAttendance();
   }, []);
 

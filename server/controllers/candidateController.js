@@ -14,7 +14,7 @@ exports.getCandidates = asyncHandler(async (req, res, next) => {
   if (!candidates || candidates.length === 0) {
     return next(new ErrorResponse("No candidates found", 404));
   }
-  console.log(candidates);
+  // console.log(candidates);
   res.status(200).json({
     candidates,
   });
@@ -62,7 +62,7 @@ exports.createCandidate = asyncHandler(async (req, res, next) => {
   try {
     const { fileName } = await uploadFile(file, uploadPath, fileNamePrefix);
 
-    console.log('File uploaded successfully:', fileName);
+    // console.log('File uploaded successfully:', fileName);
     const candidateData = {
       ...req.body,
       resume: fileName,

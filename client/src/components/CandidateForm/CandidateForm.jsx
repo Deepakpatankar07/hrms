@@ -62,7 +62,8 @@ const CandidateForm = ({ onSubmitSuccess, onCancel }) => {
     // console.log('Candidate created:', response.data.data);
     onSubmitSuccess(response.data.data);
   } catch (err) {
-    setError(err.response?.data?.message || 'Failed to create candidate');
+    // console.error('Error creating candidate:', err.response?.data.error);
+    setError(err.response?.data?.error || 'Failed to create candidate');
   } finally {
     setLoading(false);
   }
@@ -70,8 +71,8 @@ const CandidateForm = ({ onSubmitSuccess, onCancel }) => {
 
   return (
     <div className="candidate-form-container">
-      <form onSubmit={handleSubmit} className="candidate-form">
         {error && <p className="form-error-candidate">{error}</p>}
+      <form onSubmit={handleSubmit} className="candidate-form">
         <div className="form-group-candidate">
           <label>Name*</label>
           <input

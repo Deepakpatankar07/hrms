@@ -83,12 +83,13 @@ exports.updateEmployee = asyncHandler(async (req, res, next) => {
 exports.deleteEmployee = asyncHandler(async (req, res, next) => {
   const employee = await Employee.findById(req.params.id);
 
+  // console.log("employee",employee);
   if (!employee) {
     return next(
       new ErrorResponse(`Employee not found with id of ${req.params.id}`, 404)
     );
   }
-  await  Employee.findByIdAndDelete(req.params.id ,{ new: true});
+  await Employee.findByIdAndDelete(req.params.id ,{ new: true});
 
   res.status(200).json({
     success: true,

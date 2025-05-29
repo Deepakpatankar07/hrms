@@ -84,7 +84,11 @@ const EmployeesPage = () => {
   const handleDeleteEmployee = async (employeeId) => {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       try {
-        await axios.delete(`/api/v1/employees/${employeeId}`);
+        const response = await axios.delete(`http://localhost:5000/api/v1/employees/${employeeId}`,{
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
         setEmployees(
           employees.filter(
             (employee) =>
@@ -92,7 +96,7 @@ const EmployeesPage = () => {
           )
         );
       } catch (err) {
-        alert(err.response?.data?.message || "Failed to delete employee");
+        alert(err.response?.data?.error || "Failed to delete employee");
       }
     }
   };

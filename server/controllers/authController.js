@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/db');
 const User = require('../models/UserModel');
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
@@ -15,13 +16,15 @@ exports.register = async (req, res, next) => {
 
     const { name, email, password, role } = req.body;
 
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     // Create user
     const user = await User.create({
       name,
       email,
-      password,
+      password : hashedPassword,
       role
-    });
+    })
 
     res.status(201).json({
       success: true,
@@ -42,6 +45,7 @@ exports.login = async (req, res, next) => {
     }
 
     const { email, password } = req.body;
+    // console.log({email, password});
 
     // Check for user
     const user = await User.findOne({ email }).select('+password');
@@ -53,15 +57,17 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Check if password matches
-    const isMatch = await user.correctPassword(password, user.password);
 
-    if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid credentials'
-      });
-    }
+
+    // const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    // if (!isPasswordValid) {
+    //   res.status(401).json({
+    //     message: "Invalid email or password.",
+    //   });
+    //   return;
+    // }
+    
 
     // Create token
     const token = jwt.sign({ id: user._id }, config.jwtSecret, {

@@ -121,8 +121,8 @@ const LeaveForm = ({ leave, onSubmitSuccess, onCancel }) => {
           }
         );
       }
-
-      onSubmitSuccess(response.data);
+      // console.log("Leave request processed successfully:", response.data.data);
+      onSubmitSuccess(response.data.data);
     } catch (err) {
       setError(
         err.response?.data?.message || "Failed to process leave request"
