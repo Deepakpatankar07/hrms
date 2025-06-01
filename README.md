@@ -1,4 +1,4 @@
-Psquare
+###HRMS
 
 Table of Contents
 
@@ -17,7 +17,7 @@ npm: v8 or higher
 MongoDB: A MongoDB instance (local or cloud, e.g., MongoDB Atlas)
 
 Project Structure
-psquare/
+hrms/
 ├── client/                # Vite.js frontend
 │   
 ├── server/               # Express.js backend
